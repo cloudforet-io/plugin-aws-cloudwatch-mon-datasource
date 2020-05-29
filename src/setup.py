@@ -21,7 +21,7 @@ with open('VERSION', 'r') as f:
     f.close()
 
 setup(
-    name='plugin-monitoring-aws-cloudwatch',
+    name='plugin-aws-cloudwatch',
     version=VERSION,
     description='AWS CloudWatch monitoring plugin',
     long_description='',
