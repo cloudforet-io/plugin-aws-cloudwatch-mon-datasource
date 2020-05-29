@@ -1,2 +1,2 @@
-# plugin-monitoring-aws-cloudwatch
+# plugin-aws-cloudwatch
 Plugin for AWS Cloudwatch
