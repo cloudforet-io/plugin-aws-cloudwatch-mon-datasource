@@ -1,0 +1,3 @@
+CONNECTORS = {
+    'AWSBotoConnector': {}
+}
