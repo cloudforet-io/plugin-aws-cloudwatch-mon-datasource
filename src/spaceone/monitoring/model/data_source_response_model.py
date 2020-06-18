@@ -15,6 +15,16 @@ _SUPPORTED_STAT = [
     'SUM'
 ]
 
+_REFERENCE_KEYS = [
+    {
+      'resource_type': 'inventory.Server',
+      'reference_key': 'data.cloudwatch'
+    }, {
+      'resource_type': 'inventory.CloudService',
+      'reference_key': 'data.cloudwatch'
+    }
+]
+
 
 class ReferenceKeyModel(Model):
     resource_type = StringType(required=True, choices=_SUPPORTED_RESOURCE_TYPE)
@@ -24,14 +34,7 @@ class ReferenceKeyModel(Model):
 class PluginOptionsModel(Model):
     supported_resource_type = ListType(StringType, default=_SUPPORTED_RESOURCE_TYPE)
     supported_stat = ListType(StringType, default=_SUPPORTED_STAT)
-    reference_keys = ListType(ModelType(ReferenceKeyModel),
-                              default=[{
-                                  'resource_type': 'inventory.Server',
-                                  'reference_key': 'reference.resource_id'
-                              }, {
-                                  'resource_type': 'inventory.CloudService',
-                                  'reference_key': 'reference.resource_id'
-                              }])
+    reference_keys = ListType(ModelType(ReferenceKeyModel), default=_REFERENCE_KEYS)
 
 
 class PluginVerifyModel(Model):
