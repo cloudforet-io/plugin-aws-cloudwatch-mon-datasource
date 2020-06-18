@@ -28,7 +28,7 @@ class MetricService(BaseService):
             params (dict): {
                 'options': 'dict',
                 'secret_data': 'dict',
-                'resource': 'str'
+                'resource': 'dict'
             }
 
         Returns:

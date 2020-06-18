@@ -34,7 +34,6 @@ setup(
         'spaceone-core',
         'spaceone-api',
         'boto3',
-        'arnparse',
         'schematics'
     ],
     zip_safe=False,
