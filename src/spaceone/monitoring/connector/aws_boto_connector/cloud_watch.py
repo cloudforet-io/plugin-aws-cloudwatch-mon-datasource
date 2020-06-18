@@ -114,7 +114,10 @@ class CloudWatch(object):
                 'y': unit
             }
 
-        return ''
+        return {
+            'x': 'Timestamp',
+            'y': ''
+        }
 
     @staticmethod
     def _get_chart_info(namespace, dimensions, metric_name):
