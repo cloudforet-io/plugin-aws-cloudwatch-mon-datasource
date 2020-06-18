@@ -103,21 +103,19 @@ class CloudWatch(object):
             Statistics=['SampleCount']
         )
 
-        for data_point in response.get('Datapoints', []):
-            unit = data_point['Unit']
-
-            if unit == 'None':
-                unit = ''
-
-            return {
-                'x': 'Timestamp',
-                'y': unit
-            }
-
-        return {
+        return_dict = {
             'x': 'Timestamp',
             'y': ''
         }
+
+        for data_point in response.get('Datapoints', []):
+            unit = data_point['Unit']
+
+            if unit != 'None':
+                return_dict['y'] = unit
+                return return_dict
+
+        return return_dict
 
     @staticmethod
     def _get_chart_info(namespace, dimensions, metric_name):
