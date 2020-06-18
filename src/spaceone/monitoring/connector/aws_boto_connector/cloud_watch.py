@@ -91,7 +91,7 @@ class CloudWatch(object):
 
     def _get_metric_unit(self, namespace, dimensions, metric_name):
         end = datetime.utcnow()
-        start = end - timedelta(minutes=5)
+        start = end - timedelta(minutes=60)
 
         response = self.client.get_metric_statistics(
             Namespace=namespace,
@@ -113,6 +113,8 @@ class CloudWatch(object):
                 'x': 'Timestamp',
                 'y': unit
             }
+
+        return ''
 
     @staticmethod
     def _get_chart_info(namespace, dimensions, metric_name):
