@@ -7,33 +7,6 @@ from spaceone.monitoring.error import *
 
 _LOGGER = logging.getLogger(__name__)
 
-# _CLOUDWATCH_ARN_MAP = {
-#     'ec2/instance': {
-#         'namespace': 'AWS/EC2',
-#         'dimension_key': 'InstanceId'
-#     },
-#     'ec2/volume': {
-#         'namespace': 'AWS/EBS',
-#         'dimension_key': 'VolumeId'
-#     },
-#     'autoscaling/autoScalingGroup': {
-#         'namespace': 'AWS/AutoScaling',
-#         'dimension_key': 'AutoScalingGroupName'
-#     },
-#     'cloudfront/distribution': {
-#         'namespace': 'AWS/CloudFront',
-#         'dimension_key': 'DistributionId'
-#     },
-#     'directconnect/': {
-#         'namespace': 'AWS/DX',
-#         'dimension_key': 'ConnectionId'
-#     },
-#     'rds/cluster': {
-#         'namespace': 'AWS/DX',
-#         'dimension_key': 'ConnectionId'
-#     },
-# }
-
 _STAT_MAP = {
     'AVERAGE': 'Average',
     'MAX': 'Maximum',
@@ -52,10 +25,6 @@ class AWSManager(BaseManager):
         self.aws_connector.create_session(options, secret_data)
 
     def list_metrics(self, options, secret_data, resource):
-        # arn = self._parse_arn(resource)
-        # secret_data['region_name'] = arn.region
-        # namespace, dimensions = self._get_cloudwatch_query(arn, resource)
-
         if 'region_name' in resource:
             secret_data['region_name'] = resource.get('region_name')
 
@@ -65,10 +34,6 @@ class AWSManager(BaseManager):
         return self.aws_connector.list_metrics(namespace, dimensions)
 
     def get_metric_data(self, options, secret_data, resource, metric, start, end, period, stat):
-        # arn = self._parse_arn(resource)
-        # secret_data['region_name'] = arn.region
-        # namespace, dimensions = self._get_cloudwatch_query(arn, resource)
-
         if 'region_name' in resource:
             secret_data['region_name'] = resource.get('region_name')
 
@@ -117,38 +82,6 @@ class AWSManager(BaseManager):
             return 60*60*12
         else:                            # 4w ~
             return 60*60*24
-
-    # @staticmethod
-    # def _parse_arn(resource):
-    #     try:
-    #         arn = arnparse(resource)
-    #     except Exception as e:
-    #         raise ERROR_INVALID_RESOURCE_FORMAT()
-    #
-    #     return arn
-
-    # @staticmethod
-    # def _get_cloudwatch_query(arn, resource):
-    #     service = arn.service
-    #     resource_type = arn.resource_type or ''
-    #     resource_key = f'{service}/{resource_type}'
-    #     resource_value = arn.resource
-    #
-    #     if resource_key not in _CLOUDWATCH_ARN_MAP:
-    #         raise ERROR_NOT_SUPPORT_RESOURCE(resource=resource)
-    #
-    #     if resource_value is None:
-    #         raise ERROR_INVALID_RESOURCE_FORMAT()
-    #
-    #     query_conf = _CLOUDWATCH_ARN_MAP[resource_key]
-    #
-    #     namespace = query_conf['namespace']
-    #     dimensions = [{
-    #         'Name': query_conf['dimension_key'],
-    #         'Value': resource_value
-    #     }]
-    #
-    #     return namespace, dimensions
 
     @staticmethod
     def _get_cloudwatch_query(resource):
