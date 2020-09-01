@@ -36,10 +36,8 @@ class TestAWSBotoConnector(unittest.TestCase):
 
     def test_list_metrics(self):
         aws_mgr = AWSManager()
-        arn = aws_mgr._parse_arn(self.resource)
-        namespace, dimensions = aws_mgr._get_cloudwatch_query(arn, self.resource)
-
-        self.aws_credentials['region_name'] = arn.region
+        namespace, dimensions = aws_mgr._get_cloudwatch_query(self.resource)
+        self.aws_credentials['region_name'] = self.resource.get('region_name')
 
         self.aws_connector.create_session({}, self.aws_credentials)
         metrics_info = self.aws_connector.list_metrics(namespace, dimensions)
@@ -48,10 +46,8 @@ class TestAWSBotoConnector(unittest.TestCase):
 
     def test_get_metric_data(self):
         aws_mgr = AWSManager()
-        arn = aws_mgr._parse_arn(self.resource)
-        namespace, dimensions = aws_mgr._get_cloudwatch_query(arn, self.resource)
-
-        self.aws_credentials['region_name'] = arn.region
+        namespace, dimensions = aws_mgr._get_cloudwatch_query(self.resource)
+        self.aws_credentials['region_name'] = self.resource.get('region_name')
 
         end = datetime.utcnow()
         start = end - timedelta(minutes=60)
@@ -67,10 +63,8 @@ class TestAWSBotoConnector(unittest.TestCase):
 
     def test_all_metric_data(self):
         aws_mgr = AWSManager()
-        arn = aws_mgr._parse_arn(self.resource)
-        namespace, dimensions = aws_mgr._get_cloudwatch_query(arn, self.resource)
-
-        self.aws_credentials['region_name'] = arn.region
+        namespace, dimensions = aws_mgr._get_cloudwatch_query(self.resource)
+        self.aws_credentials['region_name'] = self.resource.get('region_name')
 
         end = datetime.utcnow()
         start = end - timedelta(minutes=60)

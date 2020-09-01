@@ -1,0 +1,4 @@
+spaceone-core
+spaceone-api
+boto3
+schematics
