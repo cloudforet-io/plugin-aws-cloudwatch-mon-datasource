@@ -1,7 +1,5 @@
 PROTO = {
-    'plugin': {
-        'data_source': ['DataSource'],
-        'metric': ['Metric'],
-        'log': ['Log'],
-    }
+    'spaceone.monitoring.api.plugin.data_source': ['DataSource'],
+    'spaceone.monitoring.api.plugin.metric': ['Metric'],
+    'spaceone.monitoring.api.plugin.log': ['Log'],
 }
