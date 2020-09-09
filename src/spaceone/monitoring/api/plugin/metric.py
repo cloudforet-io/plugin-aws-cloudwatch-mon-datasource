@@ -10,15 +10,21 @@ class Metric(BaseAPI, metric_pb2_grpc.MetricServicer):
     def list(self, request, context):
         params, metadata = self.parse_request(request, context)
 
+        # with self.locator.get_service('MetricService', metadata) as metric_service:
+        #     response_stream = metric_service.list(params)
+        #     for response in response_stream:
+        #         yield self.locator.get_info('PluginMetricsResponse', response)
+
         with self.locator.get_service('MetricService', metadata) as metric_service:
-            response_stream = metric_service.list(params)
-            for response in response_stream:
-                yield self.locator.get_info('PluginMetricsResponse', response)
+            return self.locator.get_info('PluginMetricsResponse', metric_service.list(params))
 
     def get_data(self, request, context):
         params, metadata = self.parse_request(request, context)
 
+        # with self.locator.get_service('MetricService', metadata) as metric_service:
+        #     response_stream = metric_service.get_data(params)
+        #     for response in response_stream:
+        #         yield self.locator.get_info('PluginMetricDataResponse', response)
+
         with self.locator.get_service('MetricService', metadata) as metric_service:
-            response_stream = metric_service.get_data(params)
-            for response in response_stream:
-                yield self.locator.get_info('PluginMetricDataResponse', response)
+            return self.locator.get_info('PluginMetricDataResponse', metric_service.get_data(params))

@@ -24,7 +24,7 @@ class TestDataSourceAPI(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        config.init_conf(service='monitoring')
+        config.init_conf(package='spaceone.monitoring')
         super().setUpClass()
 
     @classmethod
@@ -39,11 +39,8 @@ class TestDataSourceAPI(unittest.TestCase):
         mock_parse_request.return_value = (params, {})
 
         data_source_servicer = DataSource()
-        responses = data_source_servicer.verify({}, {})
-
-        for response in responses:
-            print_message(response, 'test_verify_data_source')
-            self.assertIsInstance(response, data_source_pb2.PluginVerifyResponse)
+        response = data_source_servicer.verify({}, {})
+        print_message(response, 'test_verify_data_source')
 
 
 if __name__ == "__main__":
