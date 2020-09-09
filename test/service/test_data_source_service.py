@@ -17,7 +17,7 @@ class TestDataSourceService(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        config.init_conf(service='monitoring')
+        config.init_conf(package='spaceone.monitoring')
         cls.transaction = Transaction({
             'service': 'monitoring',
             'api_class': 'DataSource'
@@ -30,6 +30,19 @@ class TestDataSourceService(unittest.TestCase):
 
     @patch.object(AWSBotoConnector, '__init__', return_value=None)
     @patch.object(AWSBotoConnector, 'create_session', return_value=None)
+    def test_init_data_source(self, *args):
+        params = {
+            'options': {},
+            'secret_data': {}
+        }
+
+        self.transaction.method = 'verify'
+        data_source_svc = DataSourceService(transaction=self.transaction)
+        response = data_source_svc.init(params.copy())
+        print_data(response, 'test_init_data_source')
+
+    @patch.object(AWSBotoConnector, '__init__', return_value=None)
+    @patch.object(AWSBotoConnector, 'create_session', return_value=None)
     def test_verify_data_source(self, *args):
         params = {
             'options': {},
@@ -38,9 +51,7 @@ class TestDataSourceService(unittest.TestCase):
 
         self.transaction.method = 'verify'
         data_source_svc = DataSourceService(transaction=self.transaction)
-        for response in data_source_svc.verify(params.copy()):
-            print_data(response, 'test_verify_data_source')
-            PluginVerifyResponse(response)
+        data_source_svc.verify(params.copy())
 
 
 if __name__ == "__main__":

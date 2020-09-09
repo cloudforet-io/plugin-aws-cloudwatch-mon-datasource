@@ -48,7 +48,7 @@ def PluginMetricsResponse(response):
     }
 
     if response.get('actions'):
-        info['actions']: list(map(PluginAction, response.get('actions', [])))
+        info['actions']: list[map(PluginAction, response.get('actions', []))]
 
     return metric_pb2.PluginMetricsResponse(**info)
 

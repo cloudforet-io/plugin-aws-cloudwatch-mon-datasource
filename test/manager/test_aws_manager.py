@@ -16,7 +16,7 @@ class TestMetricManager(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        config.init_conf(service='monitoring')
+        config.init_conf(package='spaceone.monitoring')
         super().setUpClass()
 
     @classmethod
@@ -24,19 +24,20 @@ class TestMetricManager(unittest.TestCase):
         super().tearDownClass()
 
     @patch.object(AWSBotoConnector, '__init__', return_value=None)
-    def test_parse_arn(self, *args):
-        resource = 'arn:aws:ec2:us-east-1:123456789012:vpc/vpc-fd580e98'
-
-        aws_mgr = AWSManager()
-        aws_mgr._parse_arn(resource)
-
-    @patch.object(AWSBotoConnector, '__init__', return_value=None)
     def test_get_cloudwatch_query(self, *args):
-        resource = 'arn:aws:ec2:ap-northeast-2:072548720675:instance/i-0547704161b1aa823'
+        resource = {
+            "namespace": "AWS/EC2",
+            "dimensions": [
+                {
+                    "Name": "InstanceId",
+                    "Value": "i-011e8d755568b446b"
+                }
+            ],
+            "region_name": "ap-northeast-2"
+        }
 
         aws_mgr = AWSManager()
-        arn = aws_mgr._parse_arn(resource)
-        namespace, dimensions = aws_mgr._get_cloudwatch_query(arn, resource)
+        namespace, dimensions = aws_mgr._get_cloudwatch_query(resource)
         print_data(namespace, 'test_get_cloudwatch_query.namespace')
         print_data(dimensions, 'test_get_cloudwatch_query.dimensions')
 
