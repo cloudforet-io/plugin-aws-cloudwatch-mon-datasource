@@ -24,12 +24,6 @@ class AWSManager(BaseManager):
     def verify(self, schema, options, secret_data):
         self.aws_connector.create_session(schema, options, secret_data)
 
-    # def verify_aws_access_key(self, options, secret_data):
-    #     self.aws_connector.create_session_access_key(options, secret_data)
-    #
-    # def verify_aws_assume_role(self, options, secret_data):
-    #     self.aws_connector.create_session_assume_role(options, secret_data)
-
     def list_metrics(self, schema, options, secret_data, resource):
         if 'region_name' in resource:
             secret_data['region_name'] = resource.get('region_name')

@@ -23,7 +23,7 @@ class MetricService(BaseService):
     @transaction
     @check_required(['options', 'secret_data', 'resource'])
     def list(self, params):
-        """Get CloudWatch metrics with arn
+        """Get CloudWatch metrics
 
         Args:
             params (dict): {
@@ -45,7 +45,7 @@ class MetricService(BaseService):
     @check_required(['options', 'secret_data', 'resource', 'start', 'end'])
     @change_timestamp_value(['start', 'end'], timestamp_format='iso8601')
     def get_data(self, params):
-        """Get CloudWatch metric data with arn
+        """Get CloudWatch metric data
 
         Args:
             params (dict): {

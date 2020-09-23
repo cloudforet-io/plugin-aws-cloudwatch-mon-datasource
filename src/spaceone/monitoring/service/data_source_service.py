@@ -42,12 +42,4 @@ class DataSourceService(BaseService):
             plugin_verify_response (dict)
         """
 
-        # if params['secret_data'] != {}:
-        #     self.aws_mgr.verify(params['options'], params['secret_data'])
-        
-        # schema = params.get('schema', DEFAULT_SCHEMA)
-        #
-        # if schema:
-        #     getattr(self.aws_mgr, f'verify_{schema}')(params['options'], params['secret_data'])
-
         self.aws_mgr.verify(params.get('schema', DEFAULT_SCHEMA), params['options'], params['secret_data'])
