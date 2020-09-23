@@ -13,19 +13,9 @@ class DataSource(BaseAPI, data_source_pb2_grpc.DataSourceServicer):
         with self.locator.get_service('DataSourceService', metadata) as data_source_service:
             return self.locator.get_info('PluginVerifyResponse', data_source_service.init(params))
 
-        # with self.locator.get_service('CollectorService', metadata) as collector_svc:
-        #     data = collector_svc.init(params)
-        #     return self.locator.get_info('PluginInfo', data)
-
     def verify(self, request, context):
         params, metadata = self.parse_request(request, context)
 
         with self.locator.get_service('DataSourceService', metadata) as data_source_service:
             data_source_service.verify(params)
             return self.locator.get_info('EmptyInfo')
-
-        # with self.locator.get_service('DataSourceService', metadata) as data_source_service:
-        #     response_stream = data_source_service.verify(params)
-        #     for response in response_stream:
-        #         yield self.locator.get_info('PluginVerifyResponse', response)
-
