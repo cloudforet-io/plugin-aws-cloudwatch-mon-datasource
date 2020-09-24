@@ -17,7 +17,7 @@ class TestMetricService(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        config.init_conf(service='monitoring')
+        config.init_conf(package='spaceone.monitoring')
         cls.transaction = Transaction({
             'service': 'monitoring',
             'api_class': 'DataSource'
@@ -53,14 +53,23 @@ class TestMetricService(unittest.TestCase):
         params = {
             'options': {},
             'secret_data': {},
-            'resource': 'arn:aws:ec2:ap-northeast-2:072548720675:instance/i-0547704161b1aa823'
+            'resource': {
+                "namespace": "AWS/EC2",
+                "dimensions": [
+                    {
+                        "Name": "InstanceId",
+                        "Value": "i-011e8d755568b446b"
+                    }
+                ],
+                "region_name": "ap-northeast-2"
+            }
         }
 
         self.transaction.method = 'list'
         metric_svc = MetricService(transaction=self.transaction)
-        for response in metric_svc.list(params.copy()):
-            print_data(response, 'test_list_metrics')
-            PluginMetricsResponse(response)
+        response = metric_svc.list(params.copy())
+        print_data(response, 'test_list_metrics')
+        PluginMetricsResponse(response)
 
     @patch.object(AWSBotoConnector, '__init__', return_value=None)
     @patch.object(AWSBotoConnector, 'create_session', return_value=None)
@@ -89,7 +98,16 @@ class TestMetricService(unittest.TestCase):
         params = {
             'options': {},
             'secret_data': {},
-            'resource': 'arn:aws:ec2:ap-northeast-2:072548720675:instance/i-0547704161b1aa823',
+            'resource': {
+                "namespace": "AWS/EC2",
+                "dimensions": [
+                    {
+                        "Name": "InstanceId",
+                        "Value": "i-011e8d755568b446b"
+                    }
+                ],
+                "region_name": "ap-northeast-2"
+            },
             'metric': 'CPUUtilization',
             'start': start.isoformat(),
             'end': end.isoformat()
@@ -97,9 +115,9 @@ class TestMetricService(unittest.TestCase):
 
         self.transaction.method = 'get_data'
         metric_svc = MetricService(transaction=self.transaction)
-        for response in metric_svc.get_data(params.copy()):
-            print_data(response, 'test_get_metric_data')
-            PluginMetricDataResponse(response)
+        response = metric_svc.get_data(params.copy())
+        print_data(response, 'test_get_metric_data')
+        PluginMetricDataResponse(response)
 
 
 if __name__ == "__main__":

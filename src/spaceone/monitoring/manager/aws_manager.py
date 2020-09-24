@@ -21,19 +21,19 @@ class AWSManager(BaseManager):
         super().__init__(*args, **kwargs)
         self.aws_connector: AWSBotoConnector = self.locator.get_connector('AWSBotoConnector')
 
-    def verify(self, options, secret_data):
-        self.aws_connector.create_session(options, secret_data)
+    def verify(self, schema, options, secret_data):
+        self.aws_connector.create_session(schema, options, secret_data)
 
-    def list_metrics(self, options, secret_data, resource):
+    def list_metrics(self, schema, options, secret_data, resource):
         if 'region_name' in resource:
             secret_data['region_name'] = resource.get('region_name')
 
         namespace, dimensions = self._get_cloudwatch_query(resource)
 
-        self.aws_connector.create_session(options, secret_data)
+        self.aws_connector.create_session(schema, options, secret_data)
         return self.aws_connector.list_metrics(namespace, dimensions)
 
-    def get_metric_data(self, options, secret_data, resource, metric, start, end, period, stat):
+    def get_metric_data(self, schema, options, secret_data, resource, metric, start, end, period, stat):
         if 'region_name' in resource:
             secret_data['region_name'] = resource.get('region_name')
 
@@ -44,7 +44,7 @@ class AWSManager(BaseManager):
 
         stat = self._convert_stat(stat)
 
-        self.aws_connector.create_session(options, secret_data)
+        self.aws_connector.create_session(schema, options, secret_data)
         return self.aws_connector.get_metric_data(namespace, dimensions, metric, start, end, period, stat)
 
     @staticmethod

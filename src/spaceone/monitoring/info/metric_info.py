@@ -35,7 +35,7 @@ def MetricInfo(metric):
 
 def MetricsInfo(result):
     info = {
-        'metrics': list(map(MetricInfo, result['metrics']))
+        'metrics': [MetricInfo(metric) for metric in result['metrics']]
     }
 
     return metric_pb2.MetricsInfo(**info)
@@ -48,7 +48,7 @@ def PluginMetricsResponse(response):
     }
 
     if response.get('actions'):
-        info['actions']: list(map(PluginAction, response.get('actions', [])))
+        info['actions']: [PluginAction(action) for action in response.get('actions', [])]
 
     return metric_pb2.PluginMetricsResponse(**info)
 
@@ -69,6 +69,6 @@ def PluginMetricDataResponse(response):
     }
 
     if response.get('actions'):
-        info['actions']: list(map(PluginAction, response.get('actions', [])))
+        info['actions']: [PluginAction(action) for action in response.get('actions', [])]
 
     return metric_pb2.PluginMetricDataResponse(**info)

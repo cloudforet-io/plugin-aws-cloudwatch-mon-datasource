@@ -7,6 +7,7 @@ from spaceone.monitoring.manager.aws_manager import AWSManager
 from spaceone.monitoring.manager.data_source_manager import DataSourceManager
 
 _LOGGER = logging.getLogger(__name__)
+DEFAULT_SCHEMA = 'aws_access_key'
 
 
 @authentication_handler
@@ -19,13 +20,20 @@ class DataSourceService(BaseService):
         self.aws_mgr: AWSManager = self.locator.get_manager('AWSManager')
         self.data_source_mgr: DataSourceManager = self.locator.get_manager('DataSourceManager')
 
+    @check_required(['options'])
+    def init(self, params):
+        """ init plugin by options
+        """
+        return self.data_source_mgr.init_response()
+
     @transaction
     @check_required(['options', 'secret_data'])
     def verify(self, params):
-        """Verifying data source plugin
+        """ Verifying data source plugin
 
         Args:
             params (dict): {
+                'schema': 'str',
                 'options': 'dict',
                 'secret_data': 'dict'
             }
@@ -34,7 +42,4 @@ class DataSourceService(BaseService):
             plugin_verify_response (dict)
         """
 
-        if params['secret_data'] != {}:
-            self.aws_mgr.verify(params['options'], params['secret_data'])
-
-        yield self.data_source_mgr.make_response()
+        self.aws_mgr.verify(params.get('schema', DEFAULT_SCHEMA), params['options'], params['secret_data'])

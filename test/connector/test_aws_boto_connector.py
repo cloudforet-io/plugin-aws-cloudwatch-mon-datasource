@@ -16,10 +16,11 @@ class TestAWSBotoConnector(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        config.init_conf(service='monitoring')
+        config.init_conf(package='spaceone.monitoring')
         config_path = os.environ.get('TEST_CONFIG')
         test_config = utils.load_yaml_from_file(config_path)
 
+        cls.schema = 'aws_access_key'
         cls.aws_credentials = test_config.get('AWS_CREDENTIALS', {})
         cls.resource = test_config.get('RESOURCE')
         cls.metric = test_config.get('METRIC')
@@ -32,14 +33,14 @@ class TestAWSBotoConnector(unittest.TestCase):
         super().tearDownClass()
 
     def test_create_session_with_aws_access_key(self):
-        self.aws_connector.create_session({}, self.aws_credentials)
+        self.aws_connector.create_session(self.schema, {}, self.aws_credentials)
 
     def test_list_metrics(self):
         aws_mgr = AWSManager()
         namespace, dimensions = aws_mgr._get_cloudwatch_query(self.resource)
         self.aws_credentials['region_name'] = self.resource.get('region_name')
 
-        self.aws_connector.create_session({}, self.aws_credentials)
+        self.aws_connector.create_session(self.schema, {}, self.aws_credentials)
         metrics_info = self.aws_connector.list_metrics(namespace, dimensions)
 
         print_data(metrics_info, 'test_list_metrics')
@@ -55,7 +56,7 @@ class TestAWSBotoConnector(unittest.TestCase):
         period = aws_mgr._make_period_from_time_range(start, end)
         stat = aws_mgr._convert_stat('AVERAGE')
 
-        self.aws_connector.create_session({}, self.aws_credentials)
+        self.aws_connector.create_session(self.schema, {}, self.aws_credentials)
         metric_data_info = self.aws_connector.get_metric_data(namespace, dimensions, self.metric,
                                                               start, end, period, stat)
 
@@ -72,7 +73,7 @@ class TestAWSBotoConnector(unittest.TestCase):
         period = aws_mgr._make_period_from_time_range(start, end)
         stat = aws_mgr._convert_stat('AVERAGE')
 
-        self.aws_connector.create_session({}, self.aws_credentials)
+        self.aws_connector.create_session(self.schema, {}, self.aws_credentials)
         metrics_info = self.aws_connector.list_metrics(namespace, dimensions)
 
         for metric_info in metrics_info.get('metrics', []):
