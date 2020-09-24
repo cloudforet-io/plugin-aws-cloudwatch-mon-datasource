@@ -27,14 +27,6 @@ class AWSBotoConnector(BaseConnector):
         if schema:
             getattr(self, f'_create_session_{schema}')(aws_access_key_id, aws_secret_access_key, region_name, role_arn)
 
-        # try:
-        #     if role_arn:
-        #         self._create_session_with_assume_role(aws_access_key_id, aws_secret_access_key, region_name, role_arn)
-        #     else:
-        #         self._create_session_with_access_key(aws_access_key_id, aws_secret_access_key, region_name)
-        # except Exception as e:
-        #     raise ERROR_INVALID_CREDENTIALS()
-
     @staticmethod
     def _check_secret_data(secret_data):
         if 'aws_access_key_id' not in secret_data:
@@ -62,26 +54,6 @@ class AWSBotoConnector(BaseConnector):
                                      aws_secret_access_key=credentials['SecretAccessKey'],
                                      region_name=region_name,
                                      aws_session_token=credentials['SessionToken'])
-
-    # def _create_session_with_access_key(self, aws_access_key_id, aws_secret_access_key, region_name):
-    #     self.session = boto3.Session(aws_access_key_id=aws_access_key_id,
-    #                                  aws_secret_access_key=aws_secret_access_key,
-    #                                  region_name=region_name)
-    #
-    #     sts = self.session.client('sts')
-    #     sts.get_caller_identity()
-    #
-    # def _create_session_with_assume_role(self, aws_access_key_id, aws_secret_access_key, region_name, role_arn):
-    #     self._create_session_with_access_key(aws_access_key_id, aws_secret_access_key, region_name)
-    #
-    #     sts = self.session.client('sts')
-    #     assume_role_object = sts.assume_role(RoleArn=role_arn, RoleSessionName=utils.generate_id('AssumeRoleSession'))
-    #     credentials = assume_role_object['Credentials']
-    #
-    #     self.session = boto3.Session(aws_access_key_id=credentials['AccessKeyId'],
-    #                                  aws_secret_access_key=credentials['SecretAccessKey'],
-    #                                  region_name=region_name,
-    #                                  aws_session_token=credentials['SessionToken'])
 
     def list_metrics(self, *args, **kwargs):
         cw = CloudWatch(self.session)
