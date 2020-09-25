@@ -7,4 +7,5 @@ __all__ = ['PluginInfo']
 
 
 def PluginInfo(response):
-    return data_source_pb2.PluginInfo(**response)
+    struct_response = change_struct_type(response)
+    return data_source_pb2.PluginInfo(**struct_response)
