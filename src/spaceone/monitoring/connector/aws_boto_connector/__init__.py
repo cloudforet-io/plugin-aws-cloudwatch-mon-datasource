@@ -56,7 +56,9 @@ class AWSBotoConnector(BaseConnector):
                                      aws_session_token=credentials['SessionToken'])
 
     def list_metrics(self, *args, **kwargs):
+        print('before Session')
         cw = CloudWatch(self.session)
+        print('after Session')
         return cw.list_metrics(*args, **kwargs)
 
     def get_metric_data(self, *args, **kwargs):
