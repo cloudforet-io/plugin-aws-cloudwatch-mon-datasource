@@ -25,26 +25,6 @@ class AWSManager(BaseManager):
         self.aws_connector.create_session(schema, options, secret_data)
 
     def list_metrics(self, schema, options, secret_data, resource):
-        print()
-        print('######## START ########')
-        print('schema')
-        pprint(schema)
-        print()
-
-        print('options')
-        pprint(options)
-        print()
-
-        print('secret_data')
-        pprint(secret_data)
-        print()
-
-        print('resource')
-        pprint(resource)
-        print()
-        print('######## END ########')
-        print()
-
         if 'region_name' in resource:
             secret_data['region_name'] = resource.get('region_name')
 
@@ -54,32 +34,7 @@ class AWSManager(BaseManager):
             if 'region_name' in cloud_watch:
                 secret_data['region_name'] = cloud_watch.get('region_name')
 
-        print('schema')
-        pprint(schema)
-        print()
-
-        print('options')
-        pprint(options)
-        print()
-
-        print('secret_data')
-        pprint(secret_data)
-        print()
-
-        print('resource')
-        pprint(resource)
-        print()
-
-
-
         namespace, dimensions = self._get_cloudwatch_query(resource)
-
-        print('namespace')
-        print(namespace)
-
-        print('dimensions')
-        print(dimensions)
-
         self.aws_connector.create_session(schema, options, secret_data)
 
         try:
@@ -88,9 +43,12 @@ class AWSManager(BaseManager):
         except Exception as e:
             print(e)
 
-        print('!!got passed!!')
+        print('list_metrics')
+        list_metrics = self.aws_connector.list_metrics(namespace, dimensions)
 
-        return self.aws_connector.list_metrics(namespace, dimensions)
+        pprint(list_metrics)
+
+        return list_metrics
 
     def get_metric_data(self, schema, options, secret_data, resource, metric, start, end, period, stat):
         if 'region_name' in resource:
