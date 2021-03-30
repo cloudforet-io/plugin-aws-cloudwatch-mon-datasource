@@ -144,4 +144,6 @@ class AWSManager(BaseManager):
 
     @staticmethod
     def _get_cloudwatch_query(resource):
-        return resource.get('namespace'), resource.get('dimensions')
+        data = resource.get('data', {})
+        cloud_watch = data.get('cloudwatch', {})
+        return cloud_watch.get('namespace'), cloud_watch.get('dimensions')
