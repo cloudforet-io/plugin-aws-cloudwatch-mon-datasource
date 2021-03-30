@@ -28,6 +28,12 @@ class AWSManager(BaseManager):
         if 'region_name' in resource:
             secret_data['region_name'] = resource.get('region_name')
 
+        if 'data' in resource:
+            data = resource.get('data', {})
+            cloud_watch = data.get('cloudwatch', {})
+            if 'region_name' in cloud_watch:
+                secret_data['region_name'] = cloud_watch.get('region_name')
+
         namespace, dimensions = self._get_cloudwatch_query(resource)
 
         self.aws_connector.create_session(schema, options, secret_data)
