@@ -36,7 +36,22 @@ class AWSManager(BaseManager):
 
         namespace, dimensions = self._get_cloudwatch_query(resource)
 
+        print('namespace')
+        print(namespace)
+
+        print('dimensions')
+        print(dimensions)
+
         self.aws_connector.create_session(schema, options, secret_data)
+
+        try:
+            self.aws_connector.create_session(schema, options, secret_data)
+
+        except Exception as e:
+            print(e)
+
+        print('!!got passed!!')
+
         return self.aws_connector.list_metrics(namespace, dimensions)
 
     def get_metric_data(self, schema, options, secret_data, resource, metric, start, end, period, stat):
