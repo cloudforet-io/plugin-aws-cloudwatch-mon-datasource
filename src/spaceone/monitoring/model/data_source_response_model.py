@@ -25,7 +25,7 @@ _REFERENCE_KEYS = [
     }
 ]
 
-_REQUIRED_KEYS = ['reference.resource_id']
+_REQUIRED_KEYS = ['data.cloudwatch']
 
 
 class ReferenceKeyModel(Model):
