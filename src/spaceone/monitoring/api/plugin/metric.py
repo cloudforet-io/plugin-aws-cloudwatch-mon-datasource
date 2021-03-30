@@ -11,10 +11,10 @@ class Metric(BaseAPI, metric_pb2_grpc.MetricServicer):
         params, metadata = self.parse_request(request, context)
 
         with self.locator.get_service('MetricService', metadata) as metric_service:
-            return self.locator.get_info('PluginMetricsResponse', metric_service.list(params))
+            return self.locator.get_info('MetricsInfo', metric_service.list(params))
 
     def get_data(self, request, context):
         params, metadata = self.parse_request(request, context)
 
         with self.locator.get_service('MetricService', metadata) as metric_service:
-            return self.locator.get_info('PluginMetricDataResponse', metric_service.get_data(params))
+            return self.locator.get_info('MetricDataInfo', metric_service.get_data(params))

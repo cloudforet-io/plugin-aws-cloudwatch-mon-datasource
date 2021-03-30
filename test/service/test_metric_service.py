@@ -10,7 +10,7 @@ from spaceone.core.transaction import Transaction
 from spaceone.monitoring.error import *
 from spaceone.monitoring.connector.aws_boto_connector import AWSBotoConnector
 from spaceone.monitoring.service.metric_service import MetricService
-from spaceone.monitoring.info.metric_info import PluginMetricDataResponse, PluginMetricsResponse
+from spaceone.monitoring.info.metric_info import MetricsInfo, MetricDataInfo
 
 
 class TestMetricService(unittest.TestCase):
@@ -69,7 +69,7 @@ class TestMetricService(unittest.TestCase):
         metric_svc = MetricService(transaction=self.transaction)
         response = metric_svc.list(params.copy())
         print_data(response, 'test_list_metrics')
-        PluginMetricsResponse(response)
+        MetricsInfo(response)
 
     @patch.object(AWSBotoConnector, '__init__', return_value=None)
     @patch.object(AWSBotoConnector, 'create_session', return_value=None)
@@ -117,7 +117,7 @@ class TestMetricService(unittest.TestCase):
         metric_svc = MetricService(transaction=self.transaction)
         response = metric_svc.get_data(params.copy())
         print_data(response, 'test_get_metric_data')
-        PluginMetricDataResponse(response)
+        MetricDataInfo(response)
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@ from spaceone.api.monitoring.plugin import metric_pb2
 from spaceone.api.core.v1 import plugin_pb2
 from spaceone.core.pygrpc.message_type import *
 
-__all__ = ['PluginMetricsResponse', 'PluginMetricDataResponse']
+__all__ = ['MetricsInfo', 'MetricDataInfo']
 
 
 def PluginAction(action):
@@ -41,18 +41,6 @@ def MetricsInfo(result):
     return metric_pb2.MetricsInfo(**info)
 
 
-def PluginMetricsResponse(response):
-    info = {
-        'resource_type': response['resource_type'],
-        'result': MetricsInfo(response['result'])
-    }
-
-    if response.get('actions'):
-        info['actions']: [PluginAction(action) for action in response.get('actions', [])]
-
-    return metric_pb2.PluginMetricsResponse(**info)
-
-
 def MetricDataInfo(result):
     info = {
         'labels': change_list_value_type(result['labels']),
@@ -60,15 +48,3 @@ def MetricDataInfo(result):
     }
 
     return metric_pb2.MetricDataInfo(**info)
-
-
-def PluginMetricDataResponse(response):
-    info = {
-        'resource_type': response['resource_type'],
-        'result': MetricDataInfo(response['result'])
-    }
-
-    if response.get('actions'):
-        info['actions']: [PluginAction(action) for action in response.get('actions', [])]
-
-    return metric_pb2.PluginMetricDataResponse(**info)
