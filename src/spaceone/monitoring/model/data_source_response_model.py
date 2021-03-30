@@ -25,6 +25,8 @@ _REFERENCE_KEYS = [
     }
 ]
 
+_REQUIRED_KEYS = ['reference.resource_id']
+
 
 class ReferenceKeyModel(Model):
     resource_type = StringType(required=True, choices=_SUPPORTED_RESOURCE_TYPE)
@@ -34,7 +36,7 @@ class ReferenceKeyModel(Model):
 class PluginMetadata(Model):
     supported_resource_type = ListType(StringType, default=_SUPPORTED_RESOURCE_TYPE)
     supported_stat = ListType(StringType, default=_SUPPORTED_STAT)
-    reference_keys = ListType(ModelType(ReferenceKeyModel), default=_REFERENCE_KEYS)
+    required_keys = ListType(StringType, default=_REQUIRED_KEYS)
 
 
 class PluginInitResponse(Model):
