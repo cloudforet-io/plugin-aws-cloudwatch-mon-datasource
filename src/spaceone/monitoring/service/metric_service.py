@@ -1,7 +1,7 @@
 import logging
 
 from spaceone.core.service import *
-
+from pprint import pprint
 from spaceone.monitoring.error import *
 from spaceone.monitoring.manager.aws_manager import AWSManager
 from spaceone.monitoring.manager.metric_manager import MetricManager
@@ -36,6 +36,9 @@ class MetricService(BaseService):
         Returns:
             plugin_metrics_response (dict)
         """
+        print('###########list params############3')
+        pprint(params)
+
         metrics_info = self.aws_mgr.list_metrics(params.get('schema', DEFAULT_SCHEMA), params['options'],
                                                  params['secret_data'], params['resource'])
 
@@ -63,6 +66,10 @@ class MetricService(BaseService):
         Returns:
             plugin_metric_data_response (dict)
         """
+
+        print('###########get_data params############3')
+        pprint(params)
+
         metric_data_info = self.aws_mgr.get_metric_data(params.get('schema', DEFAULT_SCHEMA), params['options'],
                                                         params['secret_data'], params['resource'], params['metric'],
                                                         params['start'], params['end'], params.get('period'),
