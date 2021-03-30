@@ -25,6 +25,7 @@ class AWSManager(BaseManager):
         self.aws_connector.create_session(schema, options, secret_data)
 
     def list_metrics(self, schema, options, secret_data, resource):
+
         if 'region_name' in resource:
             secret_data['region_name'] = resource.get('region_name')
 
@@ -51,8 +52,15 @@ class AWSManager(BaseManager):
         return list_metrics
 
     def get_metric_data(self, schema, options, secret_data, resource, metric, start, end, period, stat):
+
         if 'region_name' in resource:
             secret_data['region_name'] = resource.get('region_name')
+
+        if 'data' in resource:
+            data = resource.get('data', {})
+            cloud_watch = data.get('cloudwatch', {})
+            if 'region_name' in cloud_watch:
+                secret_data['region_name'] = cloud_watch.get('region_name')
 
         namespace, dimensions = self._get_cloudwatch_query(resource)
 
