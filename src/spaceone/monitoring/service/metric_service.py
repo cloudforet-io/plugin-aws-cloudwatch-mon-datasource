@@ -39,8 +39,11 @@ class MetricService(BaseService):
         print('###########list params############3')
         pprint(params)
 
-        metrics_info = self.aws_mgr.list_metrics(params.get('schema', DEFAULT_SCHEMA), params['options'],
-                                                 params['secret_data'], params['resource'])
+        metrics_info = self.aws_mgr.list_metrics(params.get('schema', DEFAULT_SCHEMA),
+                                                 params['options'],
+                                                 params['secret_data'],
+                                                 params['resource']
+                                                 )
 
         return self.metric_mgr.make_metrics_response(metrics_info)
 
