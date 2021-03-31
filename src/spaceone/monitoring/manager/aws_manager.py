@@ -4,7 +4,6 @@ import time
 from spaceone.core.manager import BaseManager
 from spaceone.monitoring.connector.aws_boto_connector import AWSBotoConnector
 from spaceone.monitoring.error import *
-from pprint import pprint
 _LOGGER = logging.getLogger(__name__)
 
 _STAT_MAP = {
@@ -40,14 +39,10 @@ class AWSManager(BaseManager):
 
         try:
             self.aws_connector.create_session(schema, options, secret_data)
-
         except Exception as e:
             print(e)
 
-        print('list_metrics')
         list_metrics = self.aws_connector.list_metrics(namespace, dimensions)
-
-        pprint(list_metrics)
 
         return list_metrics
 
