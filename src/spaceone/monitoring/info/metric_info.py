@@ -1,8 +1,7 @@
-import datetime
+import functools
 from spaceone.api.monitoring.plugin import metric_pb2
 from spaceone.api.core.v1 import plugin_pb2
 from spaceone.core.pygrpc.message_type import *
-from spaceone.core import utils
 
 __all__ = ['MetricsInfo', 'MetricDataInfo']
 
@@ -43,14 +42,8 @@ def MetricsInfo(result):
 
 
 def MetricDataInfo(result):
-    new_labels = []
-    for label in result.get('labels', []):
-        timestamp = label.get('seconds', 0)
-        time = datetime.datetime.fromtimestamp(timestamp)
-        new_labels.append(utils.datetime_to_iso8601(time))
-
     info = {
-        'labels': change_list_value_type(new_labels),
+        'labels': change_list_value_type(result['labels']),
         'values': change_list_value_type(result['values'])
     }
 
