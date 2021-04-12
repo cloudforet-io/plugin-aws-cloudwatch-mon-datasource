@@ -84,10 +84,7 @@ class CloudWatch(object):
 
     @staticmethod
     def _convert_timestamp(metric_datetime):
-        timestamp = int(time.mktime(metric_datetime.timetuple()))
-        return {
-            'seconds': timestamp
-        }
+        return utils.datetime_to_iso8601(metric_datetime)
 
     def _get_metric_unit(self, namespace, dimensions, metric_name):
         end = datetime.utcnow()
