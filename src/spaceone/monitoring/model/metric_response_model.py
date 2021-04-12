@@ -18,5 +18,5 @@ class MetricsModel(Model):
 
 
 class MetricDataModel(Model):
-    labels = ListType(DictType(IntType), required=True)
+    labels = ListType(StringType, required=True)
     values = ListType(UnionType((FloatType, IntType)), required=True)
