@@ -1,6 +1,5 @@
 import logging
 import time
-
 from spaceone.core.manager import BaseManager
 from spaceone.monitoring.connector.aws_boto_connector import AWSBotoConnector
 from spaceone.monitoring.error import *
@@ -31,6 +30,7 @@ class AWSManager(BaseManager):
         if 'data' in resource:
             data = resource.get('data', {})
             cloud_watch = data.get('cloudwatch', {})
+
             if 'region_name' in cloud_watch:
                 secret_data['region_name'] = cloud_watch.get('region_name')
 
@@ -51,21 +51,14 @@ class AWSManager(BaseManager):
         if 'region_name' in resource:
             secret_data['region_name'] = resource.get('region_name')
 
-        if 'data' in resource:
-            data = resource.get('data', {})
-            cloud_watch = data.get('cloudwatch', {})
-            if 'region_name' in cloud_watch:
-                secret_data['region_name'] = cloud_watch.get('region_name')
-
-        namespace, dimensions = self._get_cloudwatch_query(resource)
-
         if period is None:
             period = self._make_period_from_time_range(start, end)
 
         stat = self._convert_stat(stat)
 
         self.aws_connector.create_session(schema, options, secret_data)
-        return self.aws_connector.get_metric_data(namespace, dimensions, metric, start, end, period, stat)
+
+        return self.aws_connector.get_metric_data(resource.get('resources'), metric, start, end, period, stat)
 
     @staticmethod
     def _convert_stat(stat):
