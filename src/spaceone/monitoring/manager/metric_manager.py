@@ -1,7 +1,7 @@
 import logging
 
 from spaceone.core.manager import BaseManager
-from spaceone.monitoring.model.metric_response_model import MetricsModel, MetricDataModel
+from spaceone.monitoring.model.metric_response_model import MetricsModel
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,6 +19,4 @@ class MetricManager(BaseManager):
 
     @staticmethod
     def make_metric_data_response(metric_data_info):
-        response_model = MetricDataModel(metric_data_info)
-        response_model.validate()
-        return response_model.to_primitive()
+        return metric_data_info

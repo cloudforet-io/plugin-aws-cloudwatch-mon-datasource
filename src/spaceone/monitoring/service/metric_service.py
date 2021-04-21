@@ -42,7 +42,6 @@ class MetricService(BaseService):
                                                  params['resource']
                                                  )
 
-        print('get_metric_info has succeeded')
         return self.metric_mgr.make_metrics_response(metrics_info)
 
     @transaction

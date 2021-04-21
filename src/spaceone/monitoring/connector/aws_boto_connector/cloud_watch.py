@@ -44,27 +44,16 @@ class CloudWatch(object):
             'metrics': metrics_info
         }
 
-    def get_metric_data(self, namespace, dimensions, metric_name, start, end, period, stat, limit=None):
-        metric_id = f'metric_{utils.random_string()[:12]}'
-
+    def get_metric_data(self, resources, metric_name, start, end, period, stat, limit=None):
         extra_opts = {}
 
         if limit:
             extra_opts['MaxDatapoints'] = limit
 
+        metric_dt_query = self._generate_get_data_param_query(resources, metric_name, period, stat)
+
         response = self.client.get_metric_data(
-            MetricDataQueries=[{
-                'Id': metric_id,
-                'MetricStat': {
-                    'Metric': {
-                        'Namespace': namespace,
-                        'MetricName': metric_name,
-                        'Dimensions': dimensions
-                    },
-                    'Period': period,
-                    'Stat': stat
-                }
-            }],
+            MetricDataQueries=metric_dt_query,
             StartTime=start,
             EndTime=end,
             ScanBy='TimestampAscending',
@@ -73,12 +62,16 @@ class CloudWatch(object):
 
         metric_data_info = {
             'labels': [],
-            'values': []
+            'resource_values': {}
         }
 
         for metric_data in response.get('MetricDataResults', []):
-            metric_data_info['labels'] = list(map(self._convert_timestamp, metric_data['Timestamps']))
-            metric_data_info['values'] += metric_data['Values']
+            resource_id = self._get_resource_id(resources, metric_data.get('Label'))
+
+            if not metric_data_info.get('labels'):
+                metric_data_info['labels'] = list(map(self._convert_timestamp, metric_data['Timestamps']))
+
+            metric_data_info['resource_values'].update({resource_id: metric_data.get('Values', [])})
 
         return metric_data_info
 
@@ -117,3 +110,36 @@ class CloudWatch(object):
     @staticmethod
     def _get_chart_info(namespace, dimensions, metric_name):
         return 'line', {}
+
+    @staticmethod
+    def _get_resource_id(resources, instance_id):
+        resource_id = ''
+        for resource in resources:
+            dimensions = resource.get('dimensions', [])
+            for dimension in dimensions:
+                if dimension.get('Value') == instance_id:
+                    resource_id = resource.get('resource_id')
+            if resource_id != '':
+                break
+
+        return resource_id
+
+    @staticmethod
+    def _generate_get_data_param_query(resources, metric_name, period, stat):
+        params = []
+        for resource in resources:
+            metric_id = f'metric_{utils.random_string()[:12]}'
+            params.append({
+                'Id': metric_id,
+                'MetricStat': {
+                    'Metric': {
+                        'Namespace': resource.get('namespace'),
+                        'MetricName': metric_name,
+                        'Dimensions': resource.get('dimensions')
+                    },
+                    'Period': period,
+                    'Stat': stat
+                }
+            })
+
+        return params

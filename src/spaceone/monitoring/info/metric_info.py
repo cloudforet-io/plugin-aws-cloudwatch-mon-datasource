@@ -41,10 +41,10 @@ def MetricsInfo(result):
     return metric_pb2.MetricsInfo(**info)
 
 
-def MetricDataInfo(result):
+def MetricDataInfo(metric_data):
     info = {
-        'labels': change_list_value_type(result['labels']),
-        'values': change_list_value_type(result['values'])
+        'labels': change_list_value_type(metric_data.get('labels', [])),
+        'resource_values': change_struct_type(metric_data['resource_values'])
     }
 
     return metric_pb2.MetricDataInfo(**info)
