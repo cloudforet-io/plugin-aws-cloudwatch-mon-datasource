@@ -71,7 +71,8 @@ class CloudWatch(object):
             if not metric_data_info.get('labels'):
                 metric_data_info['labels'] = list(map(self._convert_timestamp, metric_data['Timestamps']))
 
-            metric_data_info['resource_values'].update({resource_id: metric_data.get('Values', [])})
+            if resource_id is not None:
+                metric_data_info['resource_values'].update({resource_id: metric_data.get('Values', [])})
 
         return metric_data_info
 
@@ -113,13 +114,14 @@ class CloudWatch(object):
 
     @staticmethod
     def _get_resource_id(resources, instance_id):
-        resource_id = ''
+        resource_id = None
+        print(resources)
         for resource in resources:
             dimensions = resource.get('dimensions', [])
             for dimension in dimensions:
                 if dimension.get('Value') == instance_id:
                     resource_id = resource.get('resource_id')
-            if resource_id != '':
+            if resource_id is not None:
                 break
 
         return resource_id
