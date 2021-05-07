@@ -35,7 +35,6 @@ class AWSManager(BaseManager):
                 secret_data['region_name'] = cloud_watch.get('region_name')
 
         namespace, dimensions = self._get_cloudwatch_query(resource)
-        self.aws_connector.create_session(schema, options, secret_data)
 
         try:
             self.aws_connector.create_session(schema, options, secret_data)
