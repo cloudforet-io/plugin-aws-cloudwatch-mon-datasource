@@ -1,20 +1,7 @@
-import functools
 from spaceone.api.monitoring.plugin import metric_pb2
-from spaceone.api.core.v1 import plugin_pb2
 from spaceone.core.pygrpc.message_type import *
 
 __all__ = ['MetricsInfo', 'MetricDataInfo']
-
-
-def PluginAction(action):
-    info = {
-        'method': action['method'],
-    }
-
-    if 'options' in action:
-        info['options'] = change_struct_type(action['options'])
-
-    return plugin_pb2.PluginAction(**info)
 
 
 def MetricInfo(metric):
