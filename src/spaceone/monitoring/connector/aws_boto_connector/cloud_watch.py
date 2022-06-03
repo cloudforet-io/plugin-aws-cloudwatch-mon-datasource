@@ -60,6 +60,13 @@ class CloudWatch(object):
             **extra_opts
         )
 
+        _LOGGER.debug("---------")
+        _LOGGER.debug(f'MetricDataQueries: {metric_dt_query}')
+        _LOGGER.debug(f'StartTime: {start}')
+        _LOGGER.debug(f'end: {start}')
+        _LOGGER.debug(f'extra_opts: {extra_opts}')
+        _LOGGER.debug("---------")
+
         metric_data_info = {
             'labels': [],
             'resource_values': {}
