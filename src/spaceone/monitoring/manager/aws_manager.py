@@ -12,6 +12,8 @@ _STAT_MAP = {
     'SUM': 'Sum'
 }
 
+CW_AGENT_DEFAULT_NS = 'CWAgent'
+
 
 class AWSManager(BaseManager):
 
@@ -23,7 +25,6 @@ class AWSManager(BaseManager):
         self.aws_connector.create_session(schema, options, secret_data)
 
     def list_metrics(self, schema, options, secret_data, resource):
-
         if 'region_name' in resource:
             secret_data['region_name'] = resource.get('region_name')
 
@@ -41,9 +42,14 @@ class AWSManager(BaseManager):
         except Exception as e:
             print(e)
 
-        list_metrics = self.aws_connector.list_metrics(namespace, dimensions)
+        results = self.aws_connector.list_metrics(namespace, dimensions)
+        agent_results = self.aws_connector.list_metrics(CW_AGENT_DEFAULT_NS, dimensions)
 
-        return list_metrics
+        metrics = results.get('metrics', [])
+        metrics.extend(agent_results.get('metrics', []))
+        results['metrics'] = metrics
+
+        return results
 
     def get_metric_data(self, schema, options, secret_data, resource, metric, start, end, period, stat):
 
