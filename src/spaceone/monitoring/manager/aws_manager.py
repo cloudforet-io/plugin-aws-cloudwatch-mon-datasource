@@ -41,6 +41,11 @@ class AWSManager(BaseManager):
         return {'metrics': metrics}
 
     def get_metric_data(self, schema, options, secret_data, resource, metric, start, end, period, stat):
+        _LOGGER.debug(f'[get_metric_data] period: {period}')
+        _LOGGER.debug(f'[get_metric_data] start: {start}')
+        _LOGGER.debug(f'[get_metric_data] end: {end}')
+        _LOGGER.debug(f'[get_metric_data] stat: {stat}')
+
         secret_data['region_name'] = resource.get('region_code', DEFAULT_REGION)
 
         if period is None:
@@ -49,7 +54,7 @@ class AWSManager(BaseManager):
         stat = self._convert_stat(stat)
         self.aws_connector.create_session(schema, options, secret_data)
 
-        return self.aws_connector.get_metric_data(resource.get('resources'), metric, start, end, period, stat)
+        return self.aws_connector.get_metric_data(resource.get('resources', []), metric, start, end, period, stat)
 
     @staticmethod
     def _convert_stat(stat):
