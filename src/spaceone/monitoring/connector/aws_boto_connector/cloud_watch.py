@@ -170,4 +170,4 @@ class CloudWatch(object):
         if len(_metric_info) > 1:
             return _metric_info[0], _metric_info[1]
         else:
-            return '', _metric_info[1]
+            return '', _metric_info[0]
