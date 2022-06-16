@@ -61,6 +61,8 @@ class CloudWatch(object):
         )
 
         _LOGGER.debug(f'[get_metric_data] MetricDataQueries: {metric_dt_query}')
+        _LOGGER.debug(f'[get_metric_data] StartTime: {start}')
+        _LOGGER.debug(f'[get_metric_data] EndTime: {end}')
 
         metric_data_info = {
             'labels': [],
