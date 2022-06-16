@@ -31,8 +31,8 @@ class CloudWatch(object):
                 chart_type, chart_option = self._get_chart_info(namespace, dimensions, metric_name)
 
                 metric_info = {
-                    'key': metric_name,
-                    'name': metric_name,
+                    'key': f'{namespace}.{metric_name}',
+                    'name': f'{namespace}.{metric_name}',
                     'unit': unit,
                     'chart_type': chart_type,
                     'chart_options': chart_option
@@ -62,8 +62,6 @@ class CloudWatch(object):
 
         _LOGGER.debug("---------")
         _LOGGER.debug(f'MetricDataQueries: {metric_dt_query}')
-        _LOGGER.debug(f'StartTime: {start}')
-        _LOGGER.debug(f'end: {start}')
         _LOGGER.debug(f'extra_opts: {extra_opts}')
         _LOGGER.debug("---------")
 
@@ -135,22 +133,41 @@ class CloudWatch(object):
 
         return resource_id
 
-    @staticmethod
-    def _generate_get_data_param_query(resources, metric_name, period, stat):
+    def _generate_get_data_param_query(self, resources, metric_info, period, stat):
+        namespace, metric_name = self._get_metric_namespace(metric_info)
+
         params = []
         for resource in resources:
-            metric_id = f'metric_{utils.random_string()[:12]}'
-            params.append({
-                'Id': metric_id,
-                'MetricStat': {
-                    'Metric': {
-                        'Namespace': resource.get('namespace'),
-                        'MetricName': metric_name,
-                        'Dimensions': resource.get('dimensions')
-                    },
-                    'Period': period,
-                    'Stat': stat
-                }
-            })
+            monitoring_info = resource.get('monitoring_info', {})
+
+            if namespace in monitoring_info:
+                _cloudwatch = monitoring_info[namespace]
+
+                if metric_name in _cloudwatch:
+                    dimensions = _cloudwatch[metric_name]
+                else:
+                    dimensions = _cloudwatch.get('DEFAULT', [])
+
+                params.append({
+                    'Id': f'metric_{utils.random_string()[:12]}',
+                    'MetricStat': {
+                        'Metric': {
+                            'Namespace': namespace,
+                            'MetricName': metric_name,
+                            'Dimensions': dimensions
+                        },
+                        'Period': period,
+                        'Stat': stat
+                    }
+                })
 
         return params
+
+    @staticmethod
+    def _get_metric_namespace(metric_name):
+        _metric_info = metric_name.split('.')
+
+        if len(_metric_info) > 1:
+            return _metric_info[0], _metric_info[1]
+        else:
+            return '', _metric_info[1]

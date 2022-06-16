@@ -55,7 +55,7 @@ class MetricService(BaseService):
                 'schema': 'str',
                 'options': 'dict',
                 'secret_data': 'dict',
-                'resource': 'str',
+                'resource': 'dict',
                 'metric': 'str',
                 'start': 'timestamp',
                 'end': 'timestamp',
