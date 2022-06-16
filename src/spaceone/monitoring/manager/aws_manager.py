@@ -41,11 +41,6 @@ class AWSManager(BaseManager):
         return {'metrics': metrics}
 
     def get_metric_data(self, schema, options, secret_data, resource, metric, start, end, period, stat):
-        _LOGGER.debug(f'[get_metric_data] period: {period}')
-        _LOGGER.debug(f'[get_metric_data] start: {start}')
-        _LOGGER.debug(f'[get_metric_data] end: {end}')
-        _LOGGER.debug(f'[get_metric_data] stat: {stat}')
-
         secret_data['region_name'] = resource.get('region_code', DEFAULT_REGION)
 
         if period is None:
