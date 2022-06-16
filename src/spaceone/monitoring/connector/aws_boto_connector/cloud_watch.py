@@ -32,7 +32,7 @@ class CloudWatch(object):
 
                 metric_info = {
                     'key': f'{namespace}.{metric_name}',
-                    'name': f'{namespace}.{metric_name}',
+                    'name': metric_name,
                     'unit': unit,
                     'chart_type': chart_type,
                     'chart_options': chart_option
@@ -60,15 +60,14 @@ class CloudWatch(object):
             **extra_opts
         )
 
-        _LOGGER.debug("---------")
-        _LOGGER.debug(f'MetricDataQueries: {metric_dt_query}')
-        _LOGGER.debug(f'extra_opts: {extra_opts}')
-        _LOGGER.debug("---------")
+        _LOGGER.debug(f'[get_metric_data] MetricDataQueries: {metric_dt_query}')
 
         metric_data_info = {
             'labels': [],
             'resource_values': {}
         }
+
+        _LOGGER.debug(f'[get_metric_data] get_metric_data response: {response}')
 
         for metric_data in response.get('MetricDataResults', []):
             resource_id = resources[0].get('resource_id') if len(resources) == 1 else self._get_resource_id(resources, metric_data.get('Label'))
