@@ -41,7 +41,7 @@ class AWSManager(BaseManager):
         return {'metrics': metrics}
 
     def get_metric_data(self, schema, options, secret_data, resource, metric, start, end, period, stat):
-        secret_data['region_name'] = resource.get('region_code', DEFAULT_REGION)
+        secret_data['region_name'] = resource.get('region_name', DEFAULT_REGION)
 
         if period is None:
             period = self._make_period_from_time_range(start, end)
