@@ -13,7 +13,7 @@ class MetricManager(BaseManager):
 
     @staticmethod
     def make_metrics_response(metrics_info):
-        response_model = MetricsModel(metrics_info)
+        response_model = MetricsModel(metrics_info, strict=False)
         response_model.validate()
         return response_model.to_primitive()
 
