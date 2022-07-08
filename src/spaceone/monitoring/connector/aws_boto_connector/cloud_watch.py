@@ -17,25 +17,24 @@ class CloudWatch(object):
         self.session = session
         self.client = self.session.client('cloudwatch')
 
-    def list_metrics(self, namespace, dimensions):
+    def list_metrics(self, params):
         paginator = self.client.get_paginator('list_metrics')
 
-        responses = paginator.paginate(Namespace=namespace, Dimensions=dimensions)
+        responses = paginator.paginate(**params)
 
         metrics_info = []
 
         for response in responses:
             for metric in response['Metrics']:
                 metric_name = metric['MetricName']
-                unit = self._get_metric_unit(namespace, dimensions, metric_name)
-                chart_type, chart_option = self._get_chart_info(namespace, dimensions, metric_name)
+                unit = self._get_metric_unit(params, metric_name)
+                metric_key = self._set_metric_key(params)
 
                 metric_info = {
-                    'key': f'{namespace}.{metric_name}',
+                    'key': metric_key,
                     'name': metric_name,
                     'unit': unit,
-                    'chart_type': chart_type,
-                    'chart_options': chart_option
+                    'metric_query': metric
                 }
 
                 metrics_info.append(metric_info)
@@ -60,17 +59,10 @@ class CloudWatch(object):
             **extra_opts
         )
 
-        _LOGGER.debug(f'[get_metric_data] MetricDataQueries: {metric_dt_query}')
-        _LOGGER.debug(f'[get_metric_data] StartTime: {start}')
-        _LOGGER.debug(f'[get_metric_data] EndTime: {end}')
-        _LOGGER.debug(f'[get_metric_data] extra_opts: {extra_opts}')
-
         metric_data_info = {
             'labels': [],
             'resource_values': {}
         }
-
-        _LOGGER.debug(f'[get_metric_data] get_metric_data response: {response}')
 
         for metric_data in response.get('MetricDataResults', []):
             resource_id = resources[0].get('resource_id') if len(resources) == 1 else self._get_resource_id(resources, metric_data.get('Label'))
@@ -84,22 +76,26 @@ class CloudWatch(object):
         return metric_data_info
 
     @staticmethod
+    def _set_metric_key(params):
+        return f'{params[""]}.{params[""]}'
+
+    @staticmethod
     def _convert_timestamp(metric_datetime):
         return utils.datetime_to_iso8601(metric_datetime)
 
-    def _get_metric_unit(self, namespace, dimensions, metric_name):
+    def _get_metric_unit(self, params, metric_name):
         end = datetime.utcnow()
         start = end - timedelta(minutes=60)
 
-        response = self.client.get_metric_statistics(
-            Namespace=namespace,
-            Dimensions=dimensions,
-            MetricName=metric_name,
-            StartTime=start,
-            EndTime=end,
-            Period=600,
-            Statistics=['SampleCount']
-        )
+        params.update({
+            'MetricName': metric_name,
+            'StartTime': start,
+            'EndTime': end,
+            'Period': 600,
+            'Statistics': ['SampleCount']
+        })
+
+        response = self.client.get_metric_statistics(**params)
 
         return_dict = {
             'x': 'Timestamp',
@@ -114,10 +110,6 @@ class CloudWatch(object):
                 return return_dict
 
         return return_dict
-
-    @staticmethod
-    def _get_chart_info(namespace, dimensions, metric_name):
-        return 'line', {}
 
     @staticmethod
     def _get_resource_id(resources, instance_id):

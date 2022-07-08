@@ -1,7 +1,6 @@
 import logging
 import time
 from spaceone.core.manager import BaseManager
-from spaceone.core.utils import get_dict_value
 from spaceone.monitoring.connector.aws_boto_connector import AWSBotoConnector
 from spaceone.monitoring.error import *
 _LOGGER = logging.getLogger(__name__)
@@ -13,7 +12,6 @@ _STAT_MAP = {
     'SUM': 'Sum'
 }
 
-# CW_AGENT_DEFAULT_NS = 'CWAgent'
 DEFAULT_REGION = 'us-east-1'
 
 
@@ -26,17 +24,15 @@ class AWSManager(BaseManager):
     def verify(self, schema, options, secret_data):
         self.aws_connector.create_session(schema, options, secret_data)
 
-    def list_metrics(self, schema, options, secret_data, resource):
-        secret_data['region_name'] = resource.get('region_code', DEFAULT_REGION)
+    def list_metrics(self, schema, options, secret_data, query):
+        secret_data['region_name'] = query.get('region_code', DEFAULT_REGION)
         self.aws_connector.create_session(schema, options, secret_data)
 
-        cloudwatch_info = self._get_cloudwatch_info(resource)
-
         metrics = []
-        for namespace, dimension_info in cloudwatch_info.items():
-            default_dimension = dimension_info.get('DEFAULT')
-            results = self.aws_connector.list_metrics(namespace, default_dimension)
-            metrics.extend(results.get('metrics', []))
+        for metric_info in query.get('metrics_info', []):
+            if metric_info.get('Namespace') and metric_info.get('Dimensions'):
+                results = self.aws_connector.list_metrics(query)
+                metrics.extend(results.get('metrics', []))
 
         return {'metrics': metrics}
 
@@ -92,7 +88,3 @@ class AWSManager(BaseManager):
         data = resource.get('data', {})
         cloud_watch = data.get('cloudwatch', {})
         return cloud_watch.get('namespace'), cloud_watch.get('dimensions')
-
-    @staticmethod
-    def _get_cloudwatch_info(resource):
-        return get_dict_value(resource, 'data.cloudwatch')

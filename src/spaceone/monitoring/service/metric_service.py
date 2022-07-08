@@ -20,7 +20,7 @@ class MetricService(BaseService):
         self.metric_mgr: MetricManager = self.locator.get_manager('MetricManager')
 
     @transaction
-    @check_required(['options', 'secret_data', 'resource'])
+    @check_required(['options', 'secret_data', 'query'])
     def list(self, params):
         """Get CloudWatch metrics
 
@@ -29,7 +29,7 @@ class MetricService(BaseService):
                 'schema': 'str',
                 'options': 'dict',
                 'secret_data': 'dict',
-                'resource': 'dict'
+                'query': 'dict'
             }
 
         Returns:
@@ -39,8 +39,7 @@ class MetricService(BaseService):
         metrics_info = self.aws_mgr.list_metrics(params.get('schema', DEFAULT_SCHEMA),
                                                  params['options'],
                                                  params['secret_data'],
-                                                 params['resource']
-                                                 )
+                                                 params['query'])
 
         return self.metric_mgr.make_metrics_response(metrics_info)
 
