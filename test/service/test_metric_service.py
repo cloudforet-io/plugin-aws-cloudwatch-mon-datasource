@@ -38,14 +38,20 @@ class TestMetricService(unittest.TestCase):
                     'key': 'StatusCheckFailed_System',
                     'name': 'StatusCheckFailed_System',
                     'unit': {'x': 'Timestamp', 'y': 'Count'},
-                    'chart_type': 'line',
-                    'chart_options': {}
+                    'metric_query': {
+                        'Dimensions': [{'Name': 'HostedZoneId', 'Value': 'Z01028552THR4GSCEJ9E3'}],
+                        'MetricName': 'DNSQueries',
+                        'Namespace': 'AWS/Route53'
+                    }
                 }, {
                     'key': 'EBSReadOps',
                     'name': 'EBSReadOps',
                     'unit': {'x': 'Timestamp', 'y': 'Count'},
-                    'chart_type': 'line',
-                    'chart_options': {}
+                    'metric_query': {
+                        'Dimensions': [{'Name': 'HostedZoneId', 'Value': 'Z01028552THR4GSCEJ9E3'}],
+                        'MetricName': 'DNSQueries',
+                        'Namespace': 'AWS/Route53'
+                    }
                 }
             ]
         }
@@ -53,15 +59,28 @@ class TestMetricService(unittest.TestCase):
         params = {
             'options': {},
             'secret_data': {},
-            'resource': {
-                "namespace": "AWS/EC2",
-                "dimensions": [
+            'query': {
+                "region_name": "ap-southeast-1",
+                "metrics_info": [
                     {
-                        "Name": "InstanceId",
-                        "Value": "i-011e8d755568b446b"
+                        "Namespace": "AWS/EC2",
+                        "Dimensions": [
+                            {
+                                "Name": "InstanceId",
+                                "Value": "i-0ecbd2feb6ae4ee65"
+                            }
+                        ]
+                    },
+                    {
+                        "Dimensions": [
+                            {
+                                "Name": "InstanceId",
+                                "Value": "i-0ecbd2feb6ae4ee65"
+                            }
+                        ],
+                        "Namespace": "CWAgent"
                     }
-                ],
-                "region_name": "ap-northeast-2"
+                ]
             }
         }
 
