@@ -31,7 +31,7 @@ class AWSManager(BaseManager):
         metrics = []
         for metric_info in query.get('metrics_info', []):
             if metric_info.get('Namespace') and metric_info.get('Dimensions'):
-                results = self.aws_connector.list_metrics(query)
+                results = self.aws_connector.list_metrics(metric_info)
                 metrics.extend(results.get('metrics', []))
 
         return {'metrics': metrics}
