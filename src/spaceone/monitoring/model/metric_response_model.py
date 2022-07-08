@@ -8,7 +8,7 @@ __all__ = ['MetricsModel']
 class MetricModel(Model):
     key = StringType(required=True)
     name = StringType(required=True)
-    unit = DictType(StringType, serialize_when_none=False )
+    unit = DictType(BaseType, serialize_when_none=False )
     group = StringType(serialize_when_none=False)
     metric_query = DictType(BaseType, default={})
 
