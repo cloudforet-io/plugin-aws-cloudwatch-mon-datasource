@@ -19,16 +19,14 @@ class CloudWatch(object):
 
     def list_metrics(self, params):
         paginator = self.client.get_paginator('list_metrics')
-
         responses = paginator.paginate(**params)
 
         metrics_info = []
-
         for response in responses:
             for metric in response['Metrics']:
                 metric_name = metric['MetricName']
                 unit = self._get_metric_unit(params, metric_name)
-                metric_key = self._set_metric_key(params)
+                metric_key = self._set_metric_key(params['Namespace'], metric_name)
 
                 metric_info = {
                     'key': metric_key,
@@ -39,9 +37,7 @@ class CloudWatch(object):
 
                 metrics_info.append(metric_info)
 
-        return {
-            'metrics': metrics_info
-        }
+        return {'metrics': metrics_info}
 
     def get_metric_data(self, resources, metric_name, start, end, period, stat, limit=None):
         extra_opts = {}
@@ -76,8 +72,8 @@ class CloudWatch(object):
         return metric_data_info
 
     @staticmethod
-    def _set_metric_key(params):
-        return f'{params[""]}.{params[""]}'
+    def _set_metric_key(namespace, metric_name):
+        return f'{namespace}.{metric_name}'
 
     @staticmethod
     def _convert_timestamp(metric_datetime):
