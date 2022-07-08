@@ -13,34 +13,42 @@ class MetricFactory(factory.DictFactory):
         'x': 'Datetime',
         'y': 'Count'
     }
-    chart_type = 'line'
-    chart_option = {}
+    group = 'xxx'
+    metric_query = {
+        'region_name': 'us-east-1',
+        'metrics_info': [
+            {
+                "Dimensions": [
+                    {
+                        "Name": "InstanceId",
+                        "Value": "i-xxxxxx"
+                    }
+                ],
+                "Namespace": "AWS/EC2"
+            },
+            {
+                "Dimensions": [
+                    {
+                        "Name": "InstanceId",
+                        "Value": "i-xxxxxx"
+                    }
+                ],
+                "Namespace": "CWAgent"
+            }
+        ]
+    }
 
 
-class MetricsFactory(factory.DictFactory):
-
+class MetricsResponseFactory(factory.DictFactory):
     metrics = factory.List([
         factory.SubFactory(MetricFactory) for _ in range(5)
     ])
 
 
-class MetricsResponseFactory(factory.DictFactory):
-
-    resource_type = 'monitoring.Metric'
-    actions = []
-    result = factory.SubFactory(MetricsFactory)
-
-
-class MetricDataFactory(factory.DictFactory):
+class MetricDataResponseFactory(factory.DictFactory):
 
     labels = factory.List([
         int(time.time()) for _ in range(10)
     ])
     values = [random.randint(0, 20) for _ in range(10)]
 
-
-class MetricDataResponseFactory(factory.DictFactory):
-
-    resource_type = 'monitoring.Metric'
-    actions = []
-    result = factory.SubFactory(MetricDataFactory)

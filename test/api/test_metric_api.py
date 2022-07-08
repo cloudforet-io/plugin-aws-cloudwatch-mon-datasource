@@ -1,63 +1,80 @@
+import os
 import unittest
-from unittest.mock import patch
-from google.protobuf.empty_pb2 import Empty
-
-from spaceone.core.unittest.result import print_message
 from spaceone.core.unittest.runner import RichTestRunner
-from spaceone.core import config
-from spaceone.core import utils
-from spaceone.core.service import BaseService
-from spaceone.core.locator import Locator
-from spaceone.core.pygrpc import BaseAPI
-from spaceone.api.monitoring.plugin import metric_pb2
-from spaceone.monitoring.api.plugin.metric import Metric
-from test.factory.metric_factory import MetricsResponseFactory, MetricDataResponseFactory
+from spaceone.tester import TestCase, print_json
 
+AKI = os.environ.get('AWS_ACCESS_KEY_ID', None)
+SAK = os.environ.get('AWS_SECRET_ACCESS_KEY', None)
 
-class _MockMetricService(BaseService):
+if AKI == None or SAK == None:
+    print("""
+##################################################
+# ERROR 
+#
+# Configure your AWS credential first for test
+##################################################
+example)
 
-    def list(self, params):
-        return MetricsResponseFactory()
+export AWS_ACCESS_KEY_ID=<YOUR_AWS_ACCESS_KEY_ID>
+export AWS_SECRET_ACCESS_KEY=<YOUR_AWS_SECRET_ACCESS_KEY>
 
-    def get_data(self, params):
-        return MetricDataResponseFactory()
+""")
+    exit
 
+class TestLog(TestCase):
 
-class TestMetricAPI(unittest.TestCase):
+    def test_init(self):
+        v_info = self.monitoring.DataSource.init({'options': {}})
+        print_json(v_info)
 
-    @classmethod
-    def setUpClass(cls):
-        config.init_conf(package='spaceone.monitoring')
-        super().setUpClass()
+    def test_verify(self):
+        schema = 'aws_access_key'
+        options = {
+        }
+        secret_data = {
+            'aws_access_key_id': AKI,
+            'aws_secret_access_key': SAK
+        }
+        self.monitoring.DataSource.verify({'schema': schema, 'options': options, 'secret_data': secret_data})
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        super().tearDownClass()
+    def test_metric_list(self):
+        secret_data = {
+            'aws_access_key_id': AKI,
+            'aws_secret_access_key': SAK
+        }
 
-    @patch.object(BaseAPI, '__init__', return_value=None)
-    @patch.object(Locator, 'get_service', return_value=_MockMetricService())
-    @patch.object(BaseAPI, 'parse_request')
-    def test_list_metrics(self, mock_parse_request, *args):
-        params = {}
-        mock_parse_request.return_value = (params, {})
+        params = {
+            'options': {},
+            'secret_data': secret_data,
+            'schema': 'aws_access_key',
+            'query': {
+                'region_name': 'us-east-1',
+                "metrics_info": [
+                    {
+                        "Namespace": "AWS/EC2",
+                        "Dimensions": [
+                            {
+                                "Name": "InstanceId",
+                                "Value": "i-0f6720ba34f56ea15"
+                            }
+                        ]
+                    },
+                    {
+                        "Dimensions": [
+                            {
+                                "Name": "InstanceId",
+                                "Value": "i-0f6720ba34f56ea15"
+                            }
+                        ],
+                        "Namespace": "CWAgent"
+                    }
+                ]
+            }
 
-        metric_servicer = Metric()
-        response = metric_servicer.list({}, {})
+        }
 
-        print_message(response, 'test_list_metrics')
-        self.assertIsInstance(response, metric_pb2.PluginMetricsResponse)
-
-    @patch.object(BaseAPI, '__init__', return_value=None)
-    @patch.object(Locator, 'get_service', return_value=_MockMetricService())
-    @patch.object(BaseAPI, 'parse_request')
-    def test_get_metric_data(self, mock_parse_request, *args):
-        params = {}
-        mock_parse_request.return_value = (params, {})
-
-        metric_servicer = Metric()
-        response = metric_servicer.get_data({}, {})
-        print_message(response, 'test_get_metric_data')
-        self.assertIsInstance(response, metric_pb2.PluginMetricDataResponse)
+        response = self.monitoring.Metric.list(params)
+        print_json(response)
 
 
 if __name__ == "__main__":
