@@ -47,33 +47,36 @@ class TestLog(TestCase):
             'options': {},
             'secret_data': secret_data,
             'schema': 'aws_access_key',
-            'query': {
-                'region_name': 'us-east-1',
-                "metrics_info": [
-                    {
-                        "Namespace": "AWS/EC2",
-                        "Dimensions": [
-                            {
-                                "Name": "InstanceId",
-                                "Value": "i-0f6720ba34f56ea15"
-                            }
-                        ]
-                    },
-                    {
-                        "Dimensions": [
-                            {
-                                "Name": "InstanceId",
-                                "Value": "i-0f6720ba34f56ea15"
-                            }
-                        ],
-                        "Namespace": "CWAgent"
-                    }
-                ]
-            }
-
+            'metric_query': {
+                "cloud-svc-746e880efc54": {
+                    "Namespace": "AWS/EC2",
+                    "MetricName": "CPUUtilization",
+                    "Dimensions": [
+                        {
+                            "Name": "InstanceId",
+                            "Value": "i-09036be2a405bcxxxxx"
+                        }
+                    ],
+                    "region_name": "ap-northeast-2"
+                },
+                "cloud-svc-fb341f730700": {
+                    "Namespace": "AWS/EC2",
+                    "MetricName": "CPUUtilization",
+                    "Dimensions": [
+                        {
+                            "Name": "InstanceId",
+                            "Value": "i-042786d33dfyyyyyy"
+                        }
+                    ],
+                    "region_name": "ap-northeast-2"
+                }
+            },
+            'metric': 'CPUUtilization',
+            'start': "2022-07-12T13:25:40.437Z",
+            'end': "2022-07-14T13:25:40.437Z"
         }
 
-        response = self.monitoring.Metric.list(params)
+        response = self.monitoring.Metric.get_data(params)
         print_json(response)
 
 
