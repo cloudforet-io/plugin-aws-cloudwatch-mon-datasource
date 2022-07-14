@@ -40,13 +40,13 @@ class CloudWatch(object):
 
         return {'metrics': metrics_info}
 
-    def get_metric_data(self, resources, metric_name, start, end, period, stat, limit=None):
+    def get_metric_data(self, metric_query, metric_name, start, end, period, stat, limit=None):
         extra_opts = {}
 
         if limit:
             extra_opts['MaxDatapoints'] = limit
 
-        metric_dt_query = self._generate_get_data_param_query(resources, metric_name, period, stat)
+        metric_dt_query = self._generate_get_data_param_query(metric_query, period, stat)
 
         response = self.client.get_metric_data(
             MetricDataQueries=metric_dt_query,
@@ -58,17 +58,16 @@ class CloudWatch(object):
 
         metric_data_info = {
             'labels': [],
-            'resource_values': {}
+            'values': {}
         }
 
         for metric_data in response.get('MetricDataResults', []):
-            resource_id = resources[0].get('resource_id') if len(resources) == 1 else self._get_resource_id(resources, metric_data.get('Label'))
+            cloud_service_id = metric_data['Id'].replace('_', '-')
 
             if not metric_data_info.get('labels'):
                 metric_data_info['labels'] = list(map(self._convert_timestamp, metric_data['Timestamps']))
 
-            if resource_id is not None:
-                metric_data_info['resource_values'].update({resource_id: metric_data.get('Values', [])})
+            metric_data_info['values'].update({cloud_service_id: metric_data.get('Values', [])})
 
         return metric_data_info
 
@@ -124,33 +123,22 @@ class CloudWatch(object):
 
         return resource_id
 
-    def _generate_get_data_param_query(self, resources, metric_info, period, stat):
-        namespace, metric_name = self._get_metric_namespace(metric_info)
-
+    @staticmethod
+    def _generate_get_data_param_query(metric_query, period, stat):
         params = []
-        for resource in resources:
-            monitoring_info = resource.get('monitoring_info', {})
 
-            if namespace in monitoring_info:
-                _cloudwatch = monitoring_info[namespace]
+        for cloud_service_id, _metric in metric_query.items():
+            if 'region_name' in _metric:
+                del _metric['region_name']
 
-                if metric_name in _cloudwatch:
-                    dimensions = _cloudwatch[metric_name]
-                else:
-                    dimensions = _cloudwatch.get('DEFAULT', [])
-
-                params.append({
-                    'Id': f'metric_{utils.random_string()[:12]}',
-                    'MetricStat': {
-                        'Metric': {
-                            'Namespace': namespace,
-                            'MetricName': metric_name,
-                            'Dimensions': dimensions
-                        },
-                        'Period': period,
-                        'Stat': stat
-                    }
-                })
+            params.append({
+                'Id': cloud_service_id.replace('-', '_'),
+                'MetricStat': {
+                    'Metric': _metric,
+                    'Period': period,
+                    'Stat': stat
+                }
+            })
 
         return params
 

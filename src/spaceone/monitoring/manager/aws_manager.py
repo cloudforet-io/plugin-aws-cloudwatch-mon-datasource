@@ -36,8 +36,8 @@ class AWSManager(BaseManager):
 
         return {'metrics': metrics}
 
-    def get_metric_data(self, schema, options, secret_data, resource, metric, start, end, period, stat):
-        secret_data['region_name'] = resource.get('region_name', DEFAULT_REGION)
+    def get_metric_data(self, schema, options, secret_data, metric_query, metric, start, end, period, stat):
+        secret_data['region_name'] = self.get_region_from_metric_query(metric_query)
 
         if period is None:
             period = self._make_period_from_time_range(start, end)
@@ -45,7 +45,15 @@ class AWSManager(BaseManager):
         stat = self._convert_stat(stat)
         self.aws_connector.create_session(schema, options, secret_data)
 
-        return self.aws_connector.get_metric_data(resource.get('resources', []), metric, start, end, period, stat)
+        return self.aws_connector.get_metric_data(metric_query, metric, start, end, period, stat)
+
+    @staticmethod
+    def get_region_from_metric_query(metric_query):
+        for _query in metric_query.values():
+            if 'region_name' in _query:
+                return _query['region_name']
+
+        return DEFAULT_REGION
 
     @staticmethod
     def _convert_stat(stat):
