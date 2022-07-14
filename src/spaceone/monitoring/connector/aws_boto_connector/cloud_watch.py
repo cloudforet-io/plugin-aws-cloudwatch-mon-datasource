@@ -26,7 +26,8 @@ class CloudWatch(object):
             for metric in response['Metrics']:
                 metric_name = metric['MetricName']
                 unit = self._get_metric_unit(params, metric_name)
-                metric_key = self._set_metric_key(params['Namespace'], metric_name)
+                metric_key = metric_name
+                # metric_key = self._set_metric_key(params['Namespace'], metric_name)
 
                 metric_info = {
                     'key': metric_key,
