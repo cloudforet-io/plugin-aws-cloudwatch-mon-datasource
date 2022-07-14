@@ -31,7 +31,7 @@ def MetricsInfo(result):
 def MetricDataInfo(metric_data):
     info = {
         'labels': change_list_value_type(metric_data.get('labels', [])),
-        'resource_values': change_struct_type(metric_data['resource_values'])
+        'values': change_struct_type(metric_data['values'])
     }
 
     return metric_pb2.MetricDataInfo(**info)

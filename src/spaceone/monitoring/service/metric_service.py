@@ -44,7 +44,7 @@ class MetricService(BaseService):
         return self.metric_mgr.make_metrics_response(metrics_info)
 
     @transaction
-    @check_required(['options', 'secret_data', 'resource', 'start', 'end'])
+    @check_required(['options', 'secret_data', 'metric_query', 'metric', 'start', 'end'])
     @change_timestamp_value(['start', 'end'], timestamp_format='iso8601')
     def get_data(self, params):
         """Get CloudWatch metric data
@@ -54,7 +54,7 @@ class MetricService(BaseService):
                 'schema': 'str',
                 'options': 'dict',
                 'secret_data': 'dict',
-                'resource': 'dict',
+                'metric_query': 'dict',
                 'metric': 'str',
                 'start': 'timestamp',
                 'end': 'timestamp',
@@ -67,7 +67,7 @@ class MetricService(BaseService):
         """
 
         metric_data_info = self.aws_mgr.get_metric_data(params.get('schema', DEFAULT_SCHEMA), params['options'],
-                                                        params['secret_data'], params['resource'], params['metric'],
+                                                        params['secret_data'], params['metric_query'], params['metric'],
                                                         params['start'], params['end'], params.get('period'),
                                                         params.get('stat'))
 
