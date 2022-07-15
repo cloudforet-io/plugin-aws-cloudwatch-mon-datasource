@@ -25,7 +25,7 @@ class AWSManager(BaseManager):
         self.aws_connector.create_session(schema, options, secret_data)
 
     def list_metrics(self, schema, options, secret_data, query):
-        secret_data['region_name'] = query.get('region_code', DEFAULT_REGION)
+        secret_data['region_name'] = query.get('region_name', DEFAULT_REGION)
         self.aws_connector.create_session(schema, options, secret_data)
 
         metrics = []
