@@ -33,6 +33,7 @@ class CloudWatch(object):
                     'key': metric_key,
                     'name': metric_name,
                     'unit': unit,
+                    'group': params['Namespace'],
                     'metric_query': metric
                 }
 
