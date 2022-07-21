@@ -50,7 +50,7 @@ class AWSManager(BaseManager):
     @staticmethod
     def get_region_from_metric_query(metric_query):
         for _query in metric_query.values():
-            if 'region_name' in _query:
+            if 'region_name' in _query and _query['region_name'].lower() != 'global':
                 return _query['region_name']
 
         return DEFAULT_REGION

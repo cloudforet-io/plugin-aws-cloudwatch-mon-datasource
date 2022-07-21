@@ -1,10 +1,6 @@
 import logging
-import boto3
-import time
-from datetime import datetime, timedelta
-
 from spaceone.core import utils
-from spaceone.monitoring.error import *
+from datetime import datetime, timedelta
 
 __all__ = ['CloudWatch']
 
