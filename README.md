@@ -7,7 +7,7 @@
 
 
 Find us also at [Dockerhub](https://hub.docker.com/repository/docker/spaceone/plugin-aws-cloudwatch-mon-datasource)
-> Latest stable version : 1.1.4
+> Latest stable version : 1.2.2
 
 Please contact us if you need any further information. (<support@spaceone.dev>)
 
@@ -76,4 +76,6 @@ authentication privilege for followings:
 
 ---
 
-# Release Note
+## [Release note](RELEASE.md)
+
+
