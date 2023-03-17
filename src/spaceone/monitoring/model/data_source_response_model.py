@@ -12,11 +12,13 @@ _SUPPORTED_STAT = [
 ]
 
 _REQUIRED_KEYS = ['data.cloudwatch']
+_REQUIRED_PROVIDERS = ['aws']
 
 
 class PluginMetadata(Model):
     supported_stat = ListType(StringType, default=_SUPPORTED_STAT)
     required_keys = ListType(StringType, default=_REQUIRED_KEYS)
+    supported_providers = ListType(StringType, default=_REQUIRED_PROVIDERS)
 
 
 class PluginInitResponse(Model):
