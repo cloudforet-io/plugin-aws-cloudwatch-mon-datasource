@@ -13,8 +13,8 @@ _LOGGER = logging.getLogger(__name__)
 
 class AWSBotoConnector(BaseConnector):
 
-    def __init__(self, transaction, config):
-        super().__init__(transaction, config)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def create_session(self, schema, options: dict, secret_data: dict):
         self._check_secret_data(secret_data)
